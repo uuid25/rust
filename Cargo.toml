@@ -1,0 +1,28 @@
+[package]
+name = "uuid25"
+version = "0.1.1"
+authors = ["LiosK <contact@mail.liosk.net>"]
+license = "Apache-2.0"
+edition = "2021"
+description = "25-digit case-insensitive UUID encoding"
+repository = "https://github.com/uuid25/rust"
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+serde = { version = "1.0.147", default-features = false, optional = true }
+uuid  = { version = "1.2.2",   default-features = false, optional = true }
+bson  = { version = "2.4.0",   default-features = false, optional = true }
+uuid7 = { version = "0.3.1",   default-features = false, optional = true }
+
+[dev-dependencies]
+rand = { version = "0.8.5", default-features = false, features = ["getrandom"] }
+uuid = { version = "1.2.2", default-features = false, features = ["v4"] }
+serde_test = "1.0.147"
+
+[package.metadata.docs.rs]
+# RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features --no-deps --open
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
