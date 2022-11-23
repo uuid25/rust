@@ -2,7 +2,8 @@
 use core as std;
 use std::{array, borrow, fmt, hash, ops, str};
 
-use crate::{ParseError, UuidStr};
+use crate::ParseError;
+use fstr::FStr;
 use util::{convert_base, decode_digit_values};
 
 /// Primary value type containing the Uuid25 representation of a UUID.
@@ -255,6 +256,9 @@ impl Uuid25 {
 
     /// Returns an uppercase copy of this value.
     ///
+    /// This method returns a stack-allocated string-like type that can be handled like [`String`]
+    /// through common traits.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -263,9 +267,16 @@ impl Uuid25 {
     /// assert_eq!(x.to_upper(), "3UD3GTVGOLIMGU9LAH6AIE99O");
     /// # Ok::<(), uuid25::ParseError>(())
     /// ```
-    pub const fn to_upper(self) -> UuidStr<25> {
-        match UuidStr::from_utf8(self.0) {
-            Ok(t) => t.to_upper(),
+    pub const fn to_upper(self) -> FStr<25> {
+        let mut buffer = self.0;
+        let mut i = 0;
+        while i < buffer.len() {
+            buffer[i] = buffer[i].to_ascii_uppercase();
+            i += 1;
+        }
+
+        match FStr::from_inner(buffer) {
+            Ok(t) => t,
             _ => unreachable!(),
         }
     }
@@ -273,8 +284,8 @@ impl Uuid25 {
     /// Formats this type in the 32-digit hexadecimal format without hyphens:
     /// `40eb9860cf3e45e2a90eb82236ac806c`.
     ///
-    /// This method returns a string-like type that can be [`Display`](fmt::Display)ed and is
-    /// accessible as `&str` through the [`Deref<Target = str>`](ops::Deref) trait.
+    /// This method returns a stack-allocated string-like type that can be handled like [`String`]
+    /// through common traits.
     ///
     /// # Examples
     ///
@@ -284,7 +295,7 @@ impl Uuid25 {
     /// assert_eq!(x.to_hex(), "40eb9860cf3e45e2a90eb82236ac806c");
     /// # Ok::<(), uuid25::ParseError>(())
     /// ```
-    pub const fn to_hex(self) -> UuidStr<32> {
+    pub const fn to_hex(self) -> FStr<32> {
         const DIGITS: &[u8; 16] = b"0123456789abcdef";
 
         let Ok(src) = decode_digit_values::<25>(self.as_str(), 36) else {
@@ -299,7 +310,7 @@ impl Uuid25 {
             i += 1;
         }
 
-        match UuidStr::from_utf8(buffer) {
+        match FStr::from_inner(buffer) {
             Ok(t) => t,
             _ => unreachable!(),
         }
@@ -308,8 +319,8 @@ impl Uuid25 {
     /// Formats this type in the 8-4-4-4-12 hyphenated format:
     /// `40eb9860-cf3e-45e2-a90e-b82236ac806c`.
     ///
-    /// This method returns a string-like type that can be [`Display`](fmt::Display)ed and is
-    /// accessible as `&str` through the [`Deref<Target = str>`](ops::Deref) trait.
+    /// This method returns a stack-allocated string-like type that can be handled like [`String`]
+    /// through common traits.
     ///
     /// # Examples
     ///
@@ -319,7 +330,7 @@ impl Uuid25 {
     /// assert_eq!(x.to_hyphenated(), "40eb9860-cf3e-45e2-a90e-b82236ac806c");
     /// # Ok::<(), uuid25::ParseError>(())
     /// ```
-    pub const fn to_hyphenated(self) -> UuidStr<36> {
+    pub const fn to_hyphenated(self) -> FStr<36> {
         let s = self.to_hex();
         let src = s.as_str().as_bytes();
 
@@ -335,7 +346,7 @@ impl Uuid25 {
             w += 1;
         }
 
-        match UuidStr::from_utf8(buffer) {
+        match FStr::from_inner(buffer) {
             Ok(t) => t,
             _ => unreachable!(),
         }
@@ -344,8 +355,8 @@ impl Uuid25 {
     /// Formats this type in the hyphenated format with surrounding braces:
     /// `{40eb9860-cf3e-45e2-a90e-b82236ac806c}`.
     ///
-    /// This method returns a string-like type that can be [`Display`](fmt::Display)ed and is
-    /// accessible as `&str` through the [`Deref<Target = str>`](ops::Deref) trait.
+    /// This method returns a stack-allocated string-like type that can be handled like [`String`]
+    /// through common traits.
     ///
     /// # Examples
     ///
@@ -355,7 +366,7 @@ impl Uuid25 {
     /// assert_eq!(x.to_braced(), "{40eb9860-cf3e-45e2-a90e-b82236ac806c}");
     /// # Ok::<(), uuid25::ParseError>(())
     /// ```
-    pub const fn to_braced(self) -> UuidStr<38> {
+    pub const fn to_braced(self) -> FStr<38> {
         let s = self.to_hyphenated();
         let src = s.as_str().as_bytes();
 
@@ -369,7 +380,7 @@ impl Uuid25 {
         }
         buffer[37] = b'}';
 
-        match UuidStr::from_utf8(buffer) {
+        match FStr::from_inner(buffer) {
             Ok(t) => t,
             _ => unreachable!(),
         }
@@ -378,8 +389,8 @@ impl Uuid25 {
     /// Formats this type in the RFC 4122 URN format: `urn:uuid:
     /// 40eb9860-cf3e-45e2-a90e-b82236ac806c`.
     ///
-    /// This method returns a string-like type that can be [`Display`](fmt::Display)ed and is
-    /// accessible as `&str` through the [`Deref<Target = str>`](ops::Deref) trait.
+    /// This method returns a stack-allocated string-like type that can be handled like [`String`]
+    /// through common traits.
     ///
     /// # Examples
     ///
@@ -389,7 +400,7 @@ impl Uuid25 {
     /// assert_eq!(x.to_urn(), "urn:uuid:40eb9860-cf3e-45e2-a90e-b82236ac806c");
     /// # Ok::<(), uuid25::ParseError>(())
     /// ```
-    pub const fn to_urn(self) -> UuidStr<45> {
+    pub const fn to_urn(self) -> FStr<45> {
         let s = self.to_hyphenated();
         let src = s.as_str().as_bytes();
 
@@ -410,7 +421,7 @@ impl Uuid25 {
             w += 1;
         }
 
-        match UuidStr::from_utf8(buffer) {
+        match FStr::from_inner(buffer) {
             Ok(t) => t,
             _ => unreachable!(),
         }
@@ -765,13 +776,7 @@ mod tests {
             assert_eq!(x.to_urn(), e.urn);
 
             #[cfg(feature = "std")]
-            {
-                assert_eq!(x.to_upper(), e.uuid25.to_uppercase());
-                assert_eq!(x.to_hex().to_upper(), e.hex.to_uppercase());
-                assert_eq!(x.to_hyphenated().to_upper(), e.hyphenated.to_uppercase());
-                assert_eq!(x.to_braced().to_upper(), e.braced.to_uppercase());
-                assert_eq!(x.to_urn().to_upper(), e.urn.to_uppercase());
-            }
+            assert_eq!(x.to_upper(), e.uuid25.to_uppercase());
         }
     }
 

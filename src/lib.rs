@@ -100,9 +100,6 @@ use std::fmt;
 mod uuid25_t;
 pub use uuid25_t::Uuid25;
 
-mod uuid_str;
-pub use uuid_str::UuidStr;
-
 mod integration;
 
 #[cfg(test)]
