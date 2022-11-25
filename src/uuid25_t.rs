@@ -836,7 +836,6 @@ mod util {
     ) -> Result<[u8; N], ()> {
         assert!(2 <= src_base && src_base <= 256, "invalid src_base");
         assert!(2 <= dst_base && dst_base <= 256, "invalid dst_base");
-        let (src_base, dst_base) = (src_base as u64, dst_base as u64);
         let (word_len, word_base) = compute_word_size(src_base, dst_base);
         let mut dst = [0u8; N];
 
@@ -854,10 +853,10 @@ mod util {
             rem => rem,
         };
         while pos_word_end <= src.len() {
-            let mut carry = 0u64;
+            let mut carry = 0;
             let mut i = pos_word_end.saturating_sub(word_len);
             while i < pos_word_end {
-                let e = src[i] as u64;
+                let e = src[i] as usize;
                 assert!(e < src_base, "invalid src digit");
                 carry = carry * src_base + e;
                 i += 1;
@@ -867,7 +866,7 @@ mod util {
             let mut j = N;
             while j > 0 {
                 j -= 1;
-                carry += dst[j] as u64 * word_base;
+                carry += dst[j] as usize * word_base;
                 dst[j] = (carry % dst_base) as u8;
                 carry /= dst_base;
 
@@ -886,12 +885,16 @@ mod util {
     }
 
     /// Determines the number of `src` digits to read for each outer loop.
-    const fn compute_word_size(src_base: u64, dst_base: u64) -> (usize, u64) {
-        let mut word_len = 0;
-        let mut word_base = 1;
-        while word_base < u64::MAX / (src_base * dst_base) {
-            word_len += 1;
-            word_base *= src_base;
+    const fn compute_word_size(src_base: usize, dst_base: usize) -> (usize, usize) {
+        debug_assert!(2 <= src_base && src_base <= 256, "invalid src_base");
+        debug_assert!(2 <= dst_base && dst_base <= 256, "invalid dst_base");
+        let mut word_len = 1;
+        let mut word_base = src_base;
+        if usize::MAX > 0xffff || src_base < 256 || dst_base < 256 {
+            while word_base <= usize::MAX / (src_base * dst_base) {
+                word_len += 1;
+                word_base *= src_base;
+            }
         }
         (word_len, word_base)
     }
