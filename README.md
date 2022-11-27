@@ -85,6 +85,40 @@ Optional features:
 - `bson` enables conversion traits from/into `bson::Uuid`
 - `uuid7` enables conversion traits from/into `uuid7::Uuid`
 
+## Command-line interface
+
+This crate includes a simple filter program that converts the conventional UUID
+strings into Uuid25 and vice versa. Install the command by:
+
+```sh
+cargo install --example uuid25-filter uuid25
+```
+
+Usage:
+
+```sh
+$ cat uuid-strings.txt
+1xl7tld67nekvdlrp0pkvsut5
+20a6bddafff4faa14e8fc0eb75a169f9
+20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+{20a6bdda-fff4-faa1-4e8f-c0eb75a169f9}
+urn:uuid:20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+$
+$ cat uuid-strings.txt | uuid25-filter
+1xl7tld67nekvdlrp0pkvsut5
+1xl7tld67nekvdlrp0pkvsut5
+1xl7tld67nekvdlrp0pkvsut5
+1xl7tld67nekvdlrp0pkvsut5
+1xl7tld67nekvdlrp0pkvsut5
+$
+$ cat uuid-strings.txt | uuid25-filter --to hyphenated
+20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+20a6bdda-fff4-faa1-4e8f-c0eb75a169f9
+```
+
 ## License
 
 Licensed under the Apache License, Version 2.0.
