@@ -386,8 +386,8 @@ impl Uuid25 {
         }
     }
 
-    /// Formats this type in the RFC 4122 URN format: `urn:uuid:
-    /// 40eb9860-cf3e-45e2-a90e-b82236ac806c`.
+    /// Formats this type in the RFC 4122 URN format:
+    /// `urn:uuid:40eb9860-cf3e-45e2-a90e-b82236ac806c`.
     ///
     /// This method returns a stack-allocated string-like type that can be handled like [`String`]
     /// through common traits.
