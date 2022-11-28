@@ -3,9 +3,10 @@
 [![Crates.io](https://img.shields.io/crates/v/uuid25)](https://crates.io/crates/uuid25)
 [![License](https://img.shields.io/crates/l/uuid25)](https://github.com/uuid25/rust/blob/main/LICENSE)
 
-Uuid25 is an alternative UUID representation that shortens a UUID string to just 25 digits
-using the case-insensitive Base36 encoding. This library provides functionality to convert from
-the conventional UUID formats to Uuid25 and vice versa.
+Uuid25 is an alternative UUID representation that shortens a UUID string to just
+25 digits using the case-insensitive Base36 encoding. This library provides
+functionality to convert from the conventional UUID formats to Uuid25 and vice
+versa.
 
 ```rust
 use uuid25::Uuid25;
@@ -48,9 +49,10 @@ assert_eq!(K, "abmwj0hrnat6qdyswurn714bm");
 
 ## Integration with other crates
 
-This crate implements conversion traits from/into UUID types of other popular crates. To enable
-such conversion traits, turn on the corresponding crate features. For example, to enable
-conversion from/into `uuid::Uuid`, put the following entries in `Cargo.toml`:
+This crate implements conversion traits from/into UUID types of other popular
+crates. To enable such conversion traits, turn on the corresponding crate
+features. For example, to enable conversion from/into `uuid::Uuid`, put the
+following entries in `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -74,13 +76,15 @@ println!("{}", y); // e.g. "703d4a3e-5f1a-473e-90dd-fe20c883780a"
 
 Default features:
 
-- `std` integrates this crate with `std` and enables integration with `std::string::String`
-  and `std::error::Error`. Note that this crate does not rely a lot on `std` and most of
-  the functionality of this crate is still available under `no_std` environments.
+- `std` integrates this crate with `std` and enables integration with
+  `std::string::String` and `std::error::Error`. Note that this crate does
+  not rely a lot on `std` and most of the functionality of this crate is still
+  available under `no_std` environments.
 
 Optional features:
 
-- `serde` enables serialization/deserialization of `Uuid25` values through `serde`
+- `serde` enables serialization/deserialization of `Uuid25` values through
+  `serde`
 - `uuid` enables conversion traits from/into `uuid::Uuid`
 - `bson` enables conversion traits from/into `bson::Uuid`
 - `uuid7` enables conversion traits from/into `uuid7::Uuid`
