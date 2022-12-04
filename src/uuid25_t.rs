@@ -644,6 +644,7 @@ mod tests {
         s.insert(Uuid25::parse(A).unwrap());
         s.insert(Uuid25::parse(B).unwrap());
         s.insert(Uuid25::parse(C).unwrap());
+        assert_eq!(s.len(), 3);
 
         assert!(s.contains(A));
         assert!(s.contains(B));
@@ -764,7 +765,7 @@ mod tests {
         }
     }
 
-    /// Examines textual encoding results against manually prepared cases.
+    /// Examines conversion-to results against manually prepared cases.
     #[test]
     fn to_other_formats() {
         for e in TEST_CASES {
