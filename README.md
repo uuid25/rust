@@ -21,26 +21,26 @@ let b = Uuid25::from([0xff; 16]);
 assert_eq!(b, "f5lxx1zz5pnorynqglhzmsp33");
 assert_eq!(b.to_bytes(), [0xff; 16]);
 
-// convert from/to uuid crate's Uuid value (enabled by uuid feature)
-let uuid_crate = uuid::uuid!("f38a6b1f-576f-4c22-8d4a-5f72613483f6");
-let c = Uuid25::from(uuid_crate);
-assert_eq!(c, "ef1zh7jc64vprqez41vbwe9km");
-assert_eq!(uuid::Uuid::from(c), uuid_crate);
-
 // convert from/to other popular textual representations
-let d = [
+let c = [
     Uuid25::parse("e7a1d63b711744238988afcf12161878")?,
     Uuid25::parse("e7a1d63b-7117-4423-8988-afcf12161878")?,
     Uuid25::parse("{e7a1d63b-7117-4423-8988-afcf12161878}")?,
     Uuid25::parse("urn:uuid:e7a1d63b-7117-4423-8988-afcf12161878")?,
 ];
-assert_eq!(d, ["dpoadk8izg9y4tte7vy1xt94o"; 4]);
+assert_eq!(c, ["dpoadk8izg9y4tte7vy1xt94o"; 4]);
 
-let e = Uuid25::parse("dpoadk8izg9y4tte7vy1xt94o")?;
-assert_eq!(e.to_hex(), "e7a1d63b711744238988afcf12161878");
-assert_eq!(e.to_hyphenated(), "e7a1d63b-7117-4423-8988-afcf12161878");
-assert_eq!(e.to_braced(), "{e7a1d63b-7117-4423-8988-afcf12161878}");
-assert_eq!(e.to_urn(), "urn:uuid:e7a1d63b-7117-4423-8988-afcf12161878");
+let d = Uuid25::parse("dpoadk8izg9y4tte7vy1xt94o")?;
+assert_eq!(d.to_hex(), "e7a1d63b711744238988afcf12161878");
+assert_eq!(d.to_hyphenated(), "e7a1d63b-7117-4423-8988-afcf12161878");
+assert_eq!(d.to_braced(), "{e7a1d63b-7117-4423-8988-afcf12161878}");
+assert_eq!(d.to_urn(), "urn:uuid:e7a1d63b-7117-4423-8988-afcf12161878");
+
+// convert from/to uuid crate's Uuid value (enabled by uuid feature)
+let uuid_crate = uuid::uuid!("f38a6b1f-576f-4c22-8d4a-5f72613483f6");
+let e = Uuid25::from(uuid_crate);
+assert_eq!(e, "ef1zh7jc64vprqez41vbwe9km");
+assert_eq!(uuid::Uuid::from(e), uuid_crate);
 
 // create value in const context
 const K: Uuid25 = Uuid25::parse_unwrap("ae5f2947-0784-48de-af26-690bc03b1f22");
