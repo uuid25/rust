@@ -45,6 +45,9 @@ assert_eq!(uuid::Uuid::from(e), uuid_crate);
 // create value in const context
 const K: Uuid25 = Uuid25::parse_unwrap("ae5f2947-0784-48de-af26-690bc03b1f22");
 assert_eq!(K, "abmwj0hrnat6qdyswurn714bm");
+
+// generate new UUID in Uuid25 format (enabled by gen feature)
+println!("{}", uuid25::gen_v4()); // e.g. "99wfqtl0z0yevxzpl4hv2dm5p"
 ```
 
 ## Integration with other crates
@@ -88,6 +91,8 @@ Optional features:
 - `uuid` enables conversion traits from/into `uuid::Uuid`
 - `bson` enables conversion traits from/into `bson::Uuid`
 - `uuid7` enables conversion traits from/into `uuid7::Uuid`
+- `gen` enables `gen_v4()` and `gen_v7()` functions that generate UUIDs in the
+  Uuid25 format (backed by `uuid7` crate; depends on `std` and `uuid7` features)
 
 ## Command-line interface
 

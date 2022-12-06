@@ -10,6 +10,7 @@ repository = "https://github.com/uuid25/rust"
 [features]
 default = ["std"]
 std = ["fstr/std"]
+gen = ["std", "uuid7/std"]
 
 [dependencies]
 fstr  = { version = "0.1.1",   default-features = false }

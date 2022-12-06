@@ -46,6 +46,10 @@
 //! const K: Uuid25 = Uuid25::parse_unwrap("ae5f2947-0784-48de-af26-690bc03b1f22");
 //! assert_eq!(K, "abmwj0hrnat6qdyswurn714bm");
 //!
+//! // generate new UUID in Uuid25 format (enabled by gen feature)
+//! # #[cfg(feature = "gen")]
+//! println!("{}", uuid25::gen_v4()); // e.g. "99wfqtl0z0yevxzpl4hv2dm5p"
+//!
 //! # Ok::<(), uuid25::ParseError>(())
 //! ```
 //!
@@ -93,6 +97,8 @@
 //! - `uuid` enables conversion traits from/into [`uuid::Uuid`]
 //! - `bson` enables conversion traits from/into [`bson::Uuid`]
 //! - `uuid7` enables conversion traits from/into [`uuid7::Uuid`]
+//! - `gen` enables [`gen_v4()`] and [`gen_v7()`] functions that generate UUIDs in the
+//!   Uuid25 format (backed by [`uuid7`] crate; depends on `std` and `uuid7` features)
 //!
 //! ## Command-line interface
 //!
@@ -156,3 +162,35 @@ impl fmt::Display for ParseError {
 #[cfg(feature = "std")]
 #[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for ParseError {}
+
+/// Generates a random UUID (UUIDv4) value encoded in the Uuid25 format.
+///
+/// This method calls [`uuid7::uuid4()`] and converts the result into a [`Uuid25`] value.
+///
+/// # Examples
+///
+/// ```rust
+/// println!("{}", uuid25::gen_v4()); // e.g. "6ai1f9idllvv92veittsft6fn"
+/// ```
+#[cfg(feature = "gen")]
+#[cfg_attr(docsrs, doc(cfg(feature = "gen")))]
+pub fn gen_v4() -> Uuid25 {
+    uuid7::uuid4().into()
+}
+
+/// _Experimental._ Generates a time-ordered UUID (UUIDv7) value encoded in the Uuid25 format.
+///
+/// This method calls [`uuid7::uuid7()`] and converts the result into a [`Uuid25`] value. Note that
+/// this function is provided on an experimental basis because the version 7 UUID spec is not yet
+/// finalized and may change significantly in the future.
+///
+/// # Examples
+///
+/// ```rust
+/// println!("{}", uuid25::gen_v7()); // e.g. "038jx4x68g5ttaljgy3wolxhx"
+/// ```
+#[cfg(feature = "gen")]
+#[cfg_attr(docsrs, doc(cfg(feature = "gen")))]
+pub fn gen_v7() -> Uuid25 {
+    uuid7::uuid7().into()
+}
