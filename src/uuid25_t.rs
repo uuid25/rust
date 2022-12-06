@@ -20,7 +20,7 @@ use util::{convert_base, decode_digit_values};
 /// let x = Uuid25::parse("1c8f903b-42c8-4fbe-9c38-40c37de6f0b3")?;
 /// assert_eq!(x, "1ovd57svlqb1pjqwdnzxh08mr");
 /// assert_eq!(&x as &str, "1ovd57svlqb1pjqwdnzxh08mr"); // coerce to &str
-/// assert_eq!(format!("{}", x), "1ovd57svlqb1pjqwdnzxh08mr"); // use Display trait
+/// assert_eq!(format!("{x}"), "1ovd57svlqb1pjqwdnzxh08mr"); // use Display trait
 /// assert!(x.eq_ignore_ascii_case("1OVD57SVLQB1PJQWDNZXH08MR")); // call &str's method
 /// # Ok::<(), uuid25::ParseError>(())
 /// ```
@@ -386,8 +386,8 @@ impl Uuid25 {
         }
     }
 
-    /// Formats this type in the RFC 4122 URN format: `urn:uuid:
-    /// 40eb9860-cf3e-45e2-a90e-b82236ac806c`.
+    /// Formats this type in the RFC 4122 URN format:
+    /// `urn:uuid:40eb9860-cf3e-45e2-a90e-b82236ac806c`.
     ///
     /// This method returns a stack-allocated string-like type that can be handled like [`String`]
     /// through common traits.
@@ -644,6 +644,7 @@ mod tests {
         s.insert(Uuid25::parse(A).unwrap());
         s.insert(Uuid25::parse(B).unwrap());
         s.insert(Uuid25::parse(C).unwrap());
+        assert_eq!(s.len(), 3);
 
         assert!(s.contains(A));
         assert!(s.contains(B));
@@ -764,7 +765,7 @@ mod tests {
         }
     }
 
-    /// Examines textual encoding results against manually prepared cases.
+    /// Examines conversion-to results against manually prepared cases.
     #[test]
     fn to_other_formats() {
         for e in TEST_CASES {
