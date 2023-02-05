@@ -151,7 +151,9 @@ mod test_cases;
 
 /// Error parsing a UUID string representation.
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
-pub struct ParseError {}
+pub struct ParseError {
+    debug_message: &'static str,
+}
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
