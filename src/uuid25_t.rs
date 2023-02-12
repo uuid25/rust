@@ -4,7 +4,7 @@ use std::{array, borrow, fmt, hash, ops, str};
 
 use crate::ParseError;
 use fstr::FStr;
-use util::{convert_base, decode_digit_values};
+use util::{convert_base, decode_digit_chars};
 
 /// Primary value type containing the Uuid25 representation of a UUID.
 ///
@@ -40,11 +40,15 @@ impl Uuid25 {
         let mut maybe_too_large = true;
         while i < 25 {
             if digit_values[i] >= 36 {
-                return Err(ParseError {}); // invalid digit value
+                return Err(ParseError {
+                    debug_message: "invalid digit value",
+                });
             }
             digit_values[i] = DIGITS[digit_values[i] as usize];
             if maybe_too_large && digit_values[i] > U128_MAX[i] {
-                return Err(ParseError {}); // 128-bit overflow
+                return Err(ParseError {
+                    debug_message: "128-bit overflow",
+                });
             } else if digit_values[i] < U128_MAX[i] {
                 maybe_too_large = false;
             }
@@ -72,7 +76,7 @@ impl Uuid25 {
 
     /// Converts this type into the 16-byte binary representation of a UUID.
     pub const fn to_bytes(self) -> [u8; 16] {
-        if let Ok(src) = decode_digit_values::<25>(self.as_str(), 36) {
+        if let Ok(src) = decode_digit_chars::<25>(self.as_str(), 36) {
             if let Ok(uuid_bytes) = convert_base(&src, 36, 256) {
                 return uuid_bytes;
             }
@@ -112,7 +116,9 @@ impl Uuid25 {
             36 => Self::parse_hyphenated(uuid_string),
             38 => Self::parse_braced(uuid_string),
             45 => Self::parse_urn(uuid_string),
-            _ => Err(ParseError {}),
+            _ => Err(ParseError {
+                debug_message: "invalid length",
+            }),
         }
     }
 
@@ -141,21 +147,22 @@ impl Uuid25 {
 
     /// Creates an instance from the 25-digit Base36 Uuid25 format: `3ud3gtvgolimgu9lah6aie99o`.
     pub const fn parse_uuid25(uuid_string: &str) -> Result<Self, ParseError> {
-        if let Ok(buffer) = decode_digit_values::<25>(uuid_string, 36) {
-            return Self::try_from_digit_values(buffer);
+        match decode_digit_chars::<25>(uuid_string, 36) {
+            Err(debug_message) => Err(ParseError { debug_message }),
+            Ok(buffer) => Self::try_from_digit_values(buffer),
         }
-        Err(ParseError {})
     }
 
     /// Creates an instance from the 32-digit hexadecimal format without hyphens:
     /// `40eb9860cf3e45e2a90eb82236ac806c`.
     pub const fn parse_hex(uuid_string: &str) -> Result<Self, ParseError> {
-        if let Ok(buffer) = decode_digit_values::<32>(uuid_string, 16) {
-            if let Ok(buffer) = convert_base(&buffer, 16, 36) {
-                return Self::try_from_digit_values(buffer);
-            }
+        match decode_digit_chars::<32>(uuid_string, 16) {
+            Err(debug_message) => Err(ParseError { debug_message }),
+            Ok(buffer) => match convert_base(&buffer, 16, 36) {
+                Err(debug_message) => Err(ParseError { debug_message }),
+                Ok(buffer) => Self::try_from_digit_values(buffer),
+            },
         }
-        Err(ParseError {})
     }
 
     /// Creates an instance from the 8-4-4-4-12 hyphenated format:
@@ -168,14 +175,18 @@ impl Uuid25 {
             || src[18] != b'-'
             || src[23] != b'-'
         {
-            return Err(ParseError {});
+            return Err(ParseError {
+                debug_message: "invalid hyphenated format",
+            });
         }
 
         let mut buffer = [0u8; 32];
         let (mut r, mut w) = (0, 0);
         while r < src.len() {
             if src[r] > 0x7f {
-                return Err(ParseError {});
+                return Err(ParseError {
+                    debug_message: "non-ASCII digit",
+                });
             }
             if r != 8 && r != 13 && r != 18 && r != 23 {
                 buffer[w] = src[r];
@@ -195,14 +206,18 @@ impl Uuid25 {
     pub const fn parse_braced(uuid_string: &str) -> Result<Self, ParseError> {
         let src = uuid_string.as_bytes();
         if src.len() != 38 || src[0] != b'{' || src[37] != b'}' {
-            return Err(ParseError {});
+            return Err(ParseError {
+                debug_message: "invalid braced format",
+            });
         }
 
         let mut buffer = [0u8; 36];
         let (mut r, mut w) = (0, 0);
         while r < src.len() {
             if src[r] > 0x7f {
-                return Err(ParseError {});
+                return Err(ParseError {
+                    debug_message: "non-ASCII digit",
+                });
             }
             if r != 0 && r != 37 {
                 buffer[w] = src[r];
@@ -232,14 +247,18 @@ impl Uuid25 {
             || (src[7] != b'D' && src[7] != b'd')
             || (src[8] != b':')
         {
-            return Err(ParseError {});
+            return Err(ParseError {
+                debug_message: "invalid urn format",
+            });
         }
 
         let mut buffer = [0u8; 36];
         let (mut r, mut w) = (0, 0);
         while r < src.len() {
             if src[r] > 0x7f {
-                return Err(ParseError {});
+                return Err(ParseError {
+                    debug_message: "non-ASCII digit",
+                });
             }
             if r > 8 {
                 buffer[w] = src[r];
@@ -298,7 +317,7 @@ impl Uuid25 {
     pub const fn to_hex(self) -> FStr<32> {
         const DIGITS: &[u8; 16] = b"0123456789abcdef";
 
-        let Ok(src) = decode_digit_values::<25>(self.as_str(), 36) else {
+        let Ok(src) = decode_digit_chars::<25>(self.as_str(), 36) else {
             unreachable!();
         };
         let Ok(mut buffer) = convert_base(&src, 36, 16) else {
@@ -830,11 +849,15 @@ mod util {
     /// - `src_base` is not between 2 and 256, inclusive;
     /// - `dst_base` is not between 2 and 256, inclusive; or,
     /// - `src` contains any value not less than `src_base`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error message for debugging on failure.
     pub const fn convert_base<const N: usize>(
         src: &[u8],
         src_base: usize,
         dst_base: usize,
-    ) -> Result<[u8; N], ()> {
+    ) -> Result<[u8; N], &'static str> {
         assert!(2 <= src_base && src_base <= 256, "invalid src_base");
         assert!(2 <= dst_base && dst_base <= 256, "invalid dst_base");
         let (word_len, word_base) = compute_word_size(src_base, dst_base);
@@ -843,7 +866,7 @@ mod util {
         if src.is_empty() {
             return Ok(dst);
         } else if N == 0 {
-            return Err(()); // too small dst
+            return Err("too small dst");
         }
 
         let mut dst_used = N - 1; // storage to memorize range of `dst` filled
@@ -878,7 +901,7 @@ mod util {
                 }
             }
             if carry > 0 {
-                return Err(()); // too small dst
+                return Err("too small dst");
             }
             pos_word_end += word_len;
         }
@@ -901,10 +924,18 @@ mod util {
     }
 
     /// Converts from a string of digit characters to an array of digit values.
-    pub const fn decode_digit_values<const N: usize>(
+    ///
+    /// # Panics
+    ///
+    /// Panics if `base` is not between 2 and 36.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error message for debugging on failure.
+    pub const fn decode_digit_chars<const N: usize>(
         digit_chars: &str,
         base: u8,
-    ) -> Result<[u8; N], ()> {
+    ) -> Result<[u8; N], &'static str> {
         // O(1) map from ASCII code points to Base36 digit values
         const DECODE_MAP: [u8; 256] = [
             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -931,7 +962,7 @@ mod util {
         assert!(2 <= base && base <= 36);
         let utf8_bytes = digit_chars.as_bytes();
         if utf8_bytes.len() != N {
-            return Err(());
+            return Err("invalid length");
         }
 
         let mut digit_values = [0u8; N];
@@ -939,7 +970,7 @@ mod util {
         while i < N {
             digit_values[i] = DECODE_MAP[utf8_bytes[i] as usize];
             if digit_values[i] >= base {
-                return Err(());
+                return Err("invalid digit character");
             }
             i += 1;
         }

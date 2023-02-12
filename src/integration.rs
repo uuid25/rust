@@ -99,7 +99,7 @@ mod uuid7_crate {
 mod serde_crate {
     #[cfg(not(feature = "std"))]
     use core as std;
-    use std::fmt;
+    use std::{fmt, str};
 
     use crate::Uuid25;
     use serde::{de, Deserializer, Serializer};
@@ -130,7 +130,13 @@ mod serde_crate {
         }
 
         fn visit_bytes<E: de::Error>(self, value: &[u8]) -> Result<Self::Value, E> {
-            Self::Value::try_from(value).map_err(de::Error::custom)
+            match Self::Value::try_from(value) {
+                Ok(t) => Ok(t),
+                Err(err) => match str::from_utf8(value) {
+                    Ok(str_value) => self.visit_str(str_value),
+                    _ => Err(de::Error::custom(err)),
+                },
+            }
         }
     }
 
@@ -147,6 +153,12 @@ mod serde_crate {
             serde_test::assert_de_tokens(&x, &[Token::Str(e.braced)]);
             serde_test::assert_de_tokens(&x, &[Token::Str(e.urn)]);
             serde_test::assert_de_tokens(&x, &[Token::Bytes(e.bytes)]);
+
+            serde_test::assert_de_tokens(&x, &[Token::Bytes(e.uuid25.as_bytes())]);
+            serde_test::assert_de_tokens(&x, &[Token::Bytes(e.hex.as_bytes())]);
+            serde_test::assert_de_tokens(&x, &[Token::Bytes(e.hyphenated.as_bytes())]);
+            serde_test::assert_de_tokens(&x, &[Token::Bytes(e.braced.as_bytes())]);
+            serde_test::assert_de_tokens(&x, &[Token::Bytes(e.urn.as_bytes())]);
         }
     }
 }
