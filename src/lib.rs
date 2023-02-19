@@ -150,7 +150,7 @@ mod integration;
 mod test_cases;
 
 /// Error parsing a UUID string representation.
-#[derive(Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ParseError {
     debug_message: &'static str,
 }

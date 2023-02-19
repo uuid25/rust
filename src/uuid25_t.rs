@@ -41,13 +41,13 @@ impl Uuid25 {
         while i < 25 {
             if digit_values[i] >= 36 {
                 return Err(ParseError {
-                    debug_message: "invalid digit value",
+                    debug_message: "try_from_digit_values: invalid digit value",
                 });
             }
             digit_values[i] = DIGITS[digit_values[i] as usize];
             if maybe_too_large && digit_values[i] > U128_MAX[i] {
                 return Err(ParseError {
-                    debug_message: "128-bit overflow",
+                    debug_message: "try_from_digit_values: out of u128 range",
                 });
             } else if digit_values[i] < U128_MAX[i] {
                 maybe_too_large = false;
@@ -117,7 +117,7 @@ impl Uuid25 {
             38 => Self::parse_braced(uuid_string),
             45 => Self::parse_urn(uuid_string),
             _ => Err(ParseError {
-                debug_message: "invalid length",
+                debug_message: "parse: invalid length",
             }),
         }
     }
@@ -176,7 +176,7 @@ impl Uuid25 {
             || src[23] != b'-'
         {
             return Err(ParseError {
-                debug_message: "invalid hyphenated format",
+                debug_message: "parse_hyphenated: invalid format",
             });
         }
 
@@ -185,7 +185,7 @@ impl Uuid25 {
         while r < src.len() {
             if src[r] > 0x7f {
                 return Err(ParseError {
-                    debug_message: "non-ASCII digit",
+                    debug_message: "parse_hyphenated: non-ASCII digit",
                 });
             }
             if r != 8 && r != 13 && r != 18 && r != 23 {
@@ -207,7 +207,7 @@ impl Uuid25 {
         let src = uuid_string.as_bytes();
         if src.len() != 38 || src[0] != b'{' || src[37] != b'}' {
             return Err(ParseError {
-                debug_message: "invalid braced format",
+                debug_message: "parse_braced: invalid format",
             });
         }
 
@@ -216,7 +216,7 @@ impl Uuid25 {
         while r < src.len() {
             if src[r] > 0x7f {
                 return Err(ParseError {
-                    debug_message: "non-ASCII digit",
+                    debug_message: "parse_braced: non-ASCII digit",
                 });
             }
             if r != 0 && r != 37 {
@@ -248,7 +248,7 @@ impl Uuid25 {
             || (src[8] != b':')
         {
             return Err(ParseError {
-                debug_message: "invalid urn format",
+                debug_message: "parse_urn: invalid format",
             });
         }
 
@@ -257,7 +257,7 @@ impl Uuid25 {
         while r < src.len() {
             if src[r] > 0x7f {
                 return Err(ParseError {
-                    debug_message: "non-ASCII digit",
+                    debug_message: "parse_urn: non-ASCII digit",
                 });
             }
             if r > 8 {
@@ -866,7 +866,7 @@ mod util {
         if src.is_empty() {
             return Ok(dst);
         } else if N == 0 {
-            return Err("too small dst");
+            return Err("convert_base: too small dst");
         }
 
         let mut dst_used = N - 1; // storage to memorize range of `dst` filled
@@ -901,7 +901,7 @@ mod util {
                 }
             }
             if carry > 0 {
-                return Err("too small dst");
+                return Err("convert_base: too small dst");
             }
             pos_word_end += word_len;
         }
@@ -962,7 +962,7 @@ mod util {
         assert!(2 <= base && base <= 36);
         let utf8_bytes = digit_chars.as_bytes();
         if utf8_bytes.len() != N {
-            return Err("invalid length");
+            return Err("decode_digit_chars: invalid length");
         }
 
         let mut digit_values = [0u8; N];
@@ -970,7 +970,7 @@ mod util {
         while i < N {
             digit_values[i] = DECODE_MAP[utf8_bytes[i] as usize];
             if digit_values[i] >= base {
-                return Err("invalid digit character");
+                return Err("decode_digit_chars: invalid digit character");
             }
             i += 1;
         }
