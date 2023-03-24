@@ -149,7 +149,7 @@ mod integration;
 #[cfg(test)]
 mod test_cases;
 
-/// Error parsing a UUID string representation.
+/// An error parsing a UUID string representation.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ParseError {
     debug_message: &'static str,
@@ -180,7 +180,7 @@ pub fn gen_v4() -> Uuid25 {
     uuid7::uuid4().into()
 }
 
-/// _Experimental._ Generates a time-ordered UUID (UUIDv7) value encoded in the Uuid25 format.
+/// _Experimental_: Generates a time-ordered UUID (UUIDv7) value encoded in the Uuid25 format.
 ///
 /// This method calls [`uuid7::uuid7()`] and converts the result into a [`Uuid25`] value. Note that
 /// this function is provided on an experimental basis because the version 7 UUID spec is not yet

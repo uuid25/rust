@@ -6,7 +6,7 @@ use crate::ParseError;
 use fstr::FStr;
 use util::{convert_base, decode_digit_chars};
 
-/// Primary value type containing the Uuid25 representation of a UUID.
+/// The primary value type containing the Uuid25 representation of a UUID.
 ///
 /// This type stores the 25-digit Base36 string representation in a stack-allocated byte array and
 /// can be handled similarly to an immutable [`String`]-like type through common traits such as
@@ -28,7 +28,7 @@ use util::{convert_base, decode_digit_chars};
 pub struct Uuid25([u8; 25]);
 
 impl Uuid25 {
-    /// NIL UUID (`00000000-0000-0000-0000-000000000000`)
+    /// The NIL UUID (`00000000-0000-0000-0000-000000000000`)
     pub const NIL: Self = Self::parse_unwrap("0000000000000000000000000");
 
     /// Creates an instance from an array of Base36 digit values.
