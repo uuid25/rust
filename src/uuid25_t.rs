@@ -24,7 +24,7 @@ use util::{convert_base, decode_digit_chars};
 /// assert!(x.eq_ignore_ascii_case("1OVD57SVLQB1PJQWDNZXH08MR")); // call &str's method
 /// # Ok::<(), uuid25::ParseError>(())
 /// ```
-#[derive(Copy, Clone, Eq, Ord, PartialOrd, Debug)]
+#[derive(Copy, Clone, Eq, Ord, PartialOrd)]
 pub struct Uuid25([u8; 25]);
 
 impl Uuid25 {
@@ -461,9 +461,15 @@ impl ops::Deref for Uuid25 {
     }
 }
 
+impl fmt::Debug for Uuid25 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("Uuid25").field(&self.as_str()).finish()
+    }
+}
+
 impl fmt::Display for Uuid25 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(self)
+        fmt::Display::fmt(self.as_str(), f)
     }
 }
 
