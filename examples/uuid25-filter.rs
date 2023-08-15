@@ -85,7 +85,7 @@ fn parse_args(mut args: impl Iterator<Item = String>) -> Result<Option<Format>, 
             return Err("argument to option 'to' missing".to_owned());
         };
         let Ok(f) = Format::from_arg(&to_arg) else {
-            return Err(format!("invalid argument to option 'to': '{to_arg}'" ));
+            return Err(format!("invalid argument to option 'to': '{to_arg}'"));
         };
         format.replace(f);
     }

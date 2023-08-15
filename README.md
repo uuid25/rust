@@ -47,7 +47,7 @@ const K: Uuid25 = Uuid25::parse_unwrap("ae5f2947-0784-48de-af26-690bc03b1f22");
 assert_eq!(K, "abmwj0hrnat6qdyswurn714bm");
 
 // generate new UUID in Uuid25 format (enabled by gen feature)
-println!("{}", uuid25::gen_v4()); // e.g. "99wfqtl0z0yevxzpl4hv2dm5p"
+println!("{}", uuid25::gen_v4()); // e.g., "99wfqtl0z0yevxzpl4hv2dm5p"
 ```
 
 ## Integration with other crates
@@ -69,10 +69,10 @@ And then:
 use uuid25::Uuid25;
 
 let x: Uuid25 = uuid::Uuid::new_v4().into();
-println!("{x}"); // e.g. "6n7pvwv8r54xycmuby0pp1q8a"
+println!("{x}"); // e.g., "6n7pvwv8r54xycmuby0pp1q8a"
 
 let y: uuid::Uuid = x.into();
-println!("{y}"); // e.g. "703d4a3e-5f1a-473e-90dd-fe20c883780a"
+println!("{y}"); // e.g., "703d4a3e-5f1a-473e-90dd-fe20c883780a"
 ```
 
 ## Crate features
