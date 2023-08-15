@@ -48,7 +48,7 @@
 //!
 //! // generate new UUID in Uuid25 format (enabled by gen feature)
 //! # #[cfg(feature = "gen")]
-//! println!("{}", uuid25::gen_v4()); // e.g. "99wfqtl0z0yevxzpl4hv2dm5p"
+//! println!("{}", uuid25::gen_v4()); // e.g., "99wfqtl0z0yevxzpl4hv2dm5p"
 //!
 //! # Ok::<(), uuid25::ParseError>(())
 //! ```
@@ -74,10 +74,10 @@
 //! use uuid25::Uuid25;
 //!
 //! let x: Uuid25 = uuid::Uuid::new_v4().into();
-//! println!("{x}"); // e.g. "6n7pvwv8r54xycmuby0pp1q8a"
+//! println!("{x}"); // e.g., "6n7pvwv8r54xycmuby0pp1q8a"
 //!
 //! let y: uuid::Uuid = x.into();
-//! println!("{y}"); // e.g. "703d4a3e-5f1a-473e-90dd-fe20c883780a"
+//! println!("{y}"); // e.g., "703d4a3e-5f1a-473e-90dd-fe20c883780a"
 //! # }
 //! ```
 //!
@@ -172,7 +172,7 @@ impl std::error::Error for ParseError {}
 /// # Examples
 ///
 /// ```rust
-/// println!("{}", uuid25::gen_v4()); // e.g. "6ai1f9idllvv92veittsft6fn"
+/// println!("{}", uuid25::gen_v4()); // e.g., "6ai1f9idllvv92veittsft6fn"
 /// ```
 #[cfg(feature = "gen")]
 #[cfg_attr(docsrs, doc(cfg(feature = "gen")))]
@@ -189,7 +189,7 @@ pub fn gen_v4() -> Uuid25 {
 /// # Examples
 ///
 /// ```rust
-/// println!("{}", uuid25::gen_v7()); // e.g. "038jx4x68g5ttaljgy3wolxhx"
+/// println!("{}", uuid25::gen_v7()); // e.g., "038jx4x68g5ttaljgy3wolxhx"
 /// ```
 #[cfg(feature = "gen")]
 #[cfg_attr(docsrs, doc(cfg(feature = "gen")))]

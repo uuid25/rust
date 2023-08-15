@@ -75,7 +75,7 @@ mod uuid7_crate {
 
     impl From<uuid7::Uuid> for Uuid25 {
         fn from(value: uuid7::Uuid) -> Self {
-            Self::from_bytes(*value.as_bytes())
+            Self::from_bytes(value.into())
         }
     }
 
