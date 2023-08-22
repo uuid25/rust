@@ -20,7 +20,7 @@ use util::{convert_base, decode_digit_chars};
 /// let x = Uuid25::parse("1c8f903b-42c8-4fbe-9c38-40c37de6f0b3")?;
 /// assert_eq!(x, "1ovd57svlqb1pjqwdnzxh08mr");
 /// assert_eq!(&x as &str, "1ovd57svlqb1pjqwdnzxh08mr"); // coerce to &str
-/// assert_eq!(format!("{x}"), "1ovd57svlqb1pjqwdnzxh08mr"); // use Display trait
+/// assert_eq!(format!("{}", x), "1ovd57svlqb1pjqwdnzxh08mr"); // use Display trait
 /// assert!(x.eq_ignore_ascii_case("1OVD57SVLQB1PJQWDNZXH08MR")); // call &str's method
 /// # Ok::<(), uuid25::ParseError>(())
 /// ```
