@@ -69,10 +69,10 @@ And then:
 use uuid25::Uuid25;
 
 let x: Uuid25 = uuid::Uuid::new_v4().into();
-println!("{x}"); // e.g., "6n7pvwv8r54xycmuby0pp1q8a"
+println!("{}", x); // e.g., "6n7pvwv8r54xycmuby0pp1q8a"
 
 let y: uuid::Uuid = x.into();
-println!("{y}"); // e.g., "703d4a3e-5f1a-473e-90dd-fe20c883780a"
+println!("{}", y); // e.g., "703d4a3e-5f1a-473e-90dd-fe20c883780a"
 ```
 
 ## Crate features

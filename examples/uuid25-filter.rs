@@ -10,7 +10,7 @@ fn main() -> io::Result<ExitCode> {
         match parse_args(args) {
             Ok(opt) => opt.unwrap_or(Format::Uuid25),
             Err(message) => {
-                eprintln!("Error: {message}");
+                eprintln!("Error: {}", message);
                 eprintln!(
                     "Usage: {} [--to uuid25|hex|hyphenated|braced|urn] [< lines-of-uuid-strings]",
                     program.as_deref().unwrap_or("uuid25-filter")
@@ -33,7 +33,7 @@ fn main() -> io::Result<ExitCode> {
         let trimmed = buffer.trim();
         let Ok(x) = trimmed.parse::<Uuid25>() else {
             exit_code = ExitCode::FAILURE;
-            eprintln!("Error: could not parse line {line_no}: {trimmed}");
+            eprintln!("Error: could not parse line {}: {}", line_no, trimmed);
             continue;
         };
 
@@ -76,7 +76,7 @@ fn parse_args(mut args: impl Iterator<Item = String>) -> Result<Option<Format>, 
     let mut format = None;
     while let Some(arg) = args.next() {
         if arg != "--to" {
-            return Err(format!("unrecognized argument '{arg}'"));
+            return Err(format!("unrecognized argument '{}'", arg));
         }
         if format.is_some() {
             return Err("option 'to' given more than once".to_owned());
@@ -85,7 +85,7 @@ fn parse_args(mut args: impl Iterator<Item = String>) -> Result<Option<Format>, 
             return Err("argument to option 'to' missing".to_owned());
         };
         let Ok(f) = Format::from_arg(&to_arg) else {
-            return Err(format!("invalid argument to option 'to': '{to_arg}'"));
+            return Err(format!("invalid argument to option 'to': '{}'", to_arg));
         };
         format.replace(f);
     }

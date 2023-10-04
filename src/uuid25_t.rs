@@ -20,7 +20,7 @@ use util::{convert_base, decode_digit_chars};
 /// let x = Uuid25::parse("1c8f903b-42c8-4fbe-9c38-40c37de6f0b3")?;
 /// assert_eq!(x, "1ovd57svlqb1pjqwdnzxh08mr");
 /// assert_eq!(&x as &str, "1ovd57svlqb1pjqwdnzxh08mr"); // coerce to &str
-/// assert_eq!(format!("{x}"), "1ovd57svlqb1pjqwdnzxh08mr"); // use Display trait
+/// assert_eq!(format!("{}", x), "1ovd57svlqb1pjqwdnzxh08mr"); // use Display trait
 /// assert!(x.eq_ignore_ascii_case("1OVD57SVLQB1PJQWDNZXH08MR")); // call &str's method
 /// # Ok::<(), uuid25::ParseError>(())
 /// ```
@@ -317,11 +317,12 @@ impl Uuid25 {
     pub const fn to_hex(self) -> FStr<32> {
         const DIGITS: &[u8; 16] = b"0123456789abcdef";
 
-        let Ok(src) = decode_digit_chars::<25>(self.as_str(), 36) else {
-            unreachable!();
-        };
-        let Ok(mut buffer) = convert_base(&src, 36, 16) else {
-            unreachable!();
+        let mut buffer = match decode_digit_chars::<25>(self.as_str(), 36) {
+            Ok(src) => match convert_base(&src, 36, 16) {
+                Ok(t) => t,
+                _ => unreachable!(),
+            },
+            _ => unreachable!(),
         };
         let mut i = 0;
         while i < 32 {
