@@ -317,11 +317,12 @@ impl Uuid25 {
     pub const fn to_hex(self) -> FStr<32> {
         const DIGITS: &[u8; 16] = b"0123456789abcdef";
 
-        let Ok(src) = decode_digit_chars::<25>(self.as_str(), 36) else {
-            unreachable!();
-        };
-        let Ok(mut buffer) = convert_base(&src, 36, 16) else {
-            unreachable!();
+        let mut buffer = match decode_digit_chars::<25>(self.as_str(), 36) {
+            Ok(src) => match convert_base(&src, 36, 16) {
+                Ok(t) => t,
+                _ => unreachable!(),
+            },
+            _ => unreachable!(),
         };
         let mut i = 0;
         while i < 32 {
